@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Characters/ACombatCharacter.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 AACombatCharacter::AACombatCharacter()
 {
@@ -22,6 +24,17 @@ AACombatCharacter::AACombatCharacter()
 void AACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
+{
+	auto* movementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	check(IsValid(movementComponent));
+
+	movementComponent->MaxWalkSpeed = Settings.MaxSpeed;
+	movementComponent->MaxAcceleration = Settings.Acceleration;
+	movementComponent->BrakingDecelerationWalking = Settings.BrakeSpeed;
+	movementComponent->RotationRate = {0.f, Settings.TurnSpeed, 0.f};
 }
 
 // Called every frame
