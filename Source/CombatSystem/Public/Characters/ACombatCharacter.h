@@ -24,7 +24,10 @@ struct FGaitSettings
 	float MaxSpeed { 200 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Acceleration { 150 };
+	float MaxAcceleration { 150 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UCurveFloat> AccelerationCurve {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float BrakeSpeed { 120 };
@@ -49,6 +52,14 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void SetGaitSettings(const FGaitSettings& Settings);
 
+	UFUNCTION(BlueprintCallable, Category="Movement")
+	void SetGait(const ECharacterGait& InGait);
+
+	UFUNCTION(BlueprintCallable, Category="Movement")
+	FGaitSettings GetCurrentGaitSettings();
+
+	TOptional<const FGaitSettings> FindGaitSettings(ECharacterGait InGait);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -69,4 +80,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Movement")
 	TMap<ECharacterGait, FGaitSettings> GaitSettings;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Movement")
+	TObjectPtr<UCurveFloat> BrakingCurve {};
+	
+private:
+	TObjectPtr<UCharacterMovementComponent> MovementComponent;
 };

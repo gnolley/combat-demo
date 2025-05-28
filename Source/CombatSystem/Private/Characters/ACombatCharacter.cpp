@@ -24,6 +24,8 @@ AACombatCharacter::AACombatCharacter()
 void AACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	MovementComponent = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+	SetGait(ECharacterGait::Walk);
 }
 
 void AACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
@@ -32,15 +34,57 @@ void AACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
 	check(IsValid(movementComponent));
 
 	movementComponent->MaxWalkSpeed = Settings.MaxSpeed;
-	movementComponent->MaxAcceleration = Settings.Acceleration;
+	movementComponent->MaxAcceleration = Settings.MaxAcceleration;
 	movementComponent->BrakingDecelerationWalking = Settings.BrakeSpeed;
 	movementComponent->RotationRate = {0.f, Settings.TurnSpeed, 0.f};
+}
+
+void AACombatCharacter::SetGait(const ECharacterGait& InGait)
+{
+	Gait = InGait;
+
+	auto settings = FindGaitSettings(InGait);
+	if (settings.IsSet())
+	{
+		SetGaitSettings(settings.GetValue());
+	}
+}
+
+FGaitSettings AACombatCharacter::GetCurrentGaitSettings()
+{
+	auto settings = FindGaitSettings(Gait);
+	if (settings.IsSet())
+	{
+		return settings.GetValue();
+	}
+	
+	return GaitSettings.IsEmpty() ? FGaitSettings() : GaitSettings.begin().Value();
+}
+
+TOptional<const FGaitSettings> AACombatCharacter::FindGaitSettings(ECharacterGait InGait)
+{
+	return GaitSettings.Contains(InGait) ? GaitSettings[InGait] : TOptional<const FGaitSettings>();
 }
 
 // Called every frame
 void AACombatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (IsValid(MovementComponent) == false) return;
+
+	auto speed = GetVelocity().Length();
+	
+	if (IsValid(BrakingCurve))
+	{
+		MovementComponent->BrakingDecelerationWalking = BrakingCurve->GetFloatValue(speed);
+	}
+	
+	auto settings = GetCurrentGaitSettings();
+	if (IsValid(settings.AccelerationCurve) == false) return;
+	
+	auto accel = settings.MaxAcceleration * settings.AccelerationCurve->GetFloatValue(speed / settings.MaxSpeed);
+	
+	MovementComponent->MaxAcceleration = accel;
 }
 
 // Called to bind functionality to input
