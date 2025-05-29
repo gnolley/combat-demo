@@ -6,7 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "ACombatCharacter.generated.h"
+#include "AbilitySystemInterface.h"
+#include "Gameplay/Weapon.h"
+#include "CombatCharacter.generated.h"
 
 UENUM(BlueprintType)
 enum class ECharacterGait : uint8
@@ -37,43 +39,48 @@ struct FGaitSettings
 };
 
 UCLASS()
-class COMBATSYSTEM_API AACombatCharacter : public ACharacter
+class COMBATSYSTEM_API ACombatCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AACombatCharacter();
+	ACombatCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PossessedBy(AController* NewController) override;
 
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void SetGaitSettings(const FGaitSettings& Settings);
 
 	UFUNCTION(BlueprintCallable, Category="Movement")
-	void SetGait(const ECharacterGait& InGait);
-
-	UFUNCTION(BlueprintCallable, Category="Movement")
 	FGaitSettings GetCurrentGaitSettings();
-
+	
 	TOptional<const FGaitSettings> FindGaitSettings(ECharacterGait InGait);
 	
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; }
+
+	UFUNCTION(BlueprintCallable, Category="Movement")
+	void SetGait(const ECharacterGait& InGait);
+
+	void EquipWeapon(TObjectPtr<AWeapon> Weapon);
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Camera")
 	TObjectPtr<USpringArmComponent> CameraArm;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Camera")
 	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Abilities")
+	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
+
+	TObjectPtr<AWeapon> MainHand {};
+	TObjectPtr<AWeapon> OffHand {};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Movement")
 	ECharacterGait Gait { ECharacterGait::Walk };

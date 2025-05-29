@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "Characters/ACombatCharacter.h"
+#include "Characters/CombatCharacter.h"
 
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
-AACombatCharacter::AACombatCharacter()
+ACombatCharacter::ACombatCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -18,17 +19,29 @@ AACombatCharacter::AACombatCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
+
+	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
 }
 
 // Called when the game starts or when spawned
-void AACombatCharacter::BeginPlay()
+void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MovementComponent = Cast<UCharacterMovementComponent>(GetCharacterMovement());
 	SetGait(ECharacterGait::Walk);
 }
 
-void AACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
+void ACombatCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (IsValid(AbilitySystem))
+	{
+		AbilitySystem->InitAbilityActorInfo(this, this);
+	}
+}
+
+void ACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
 {
 	auto* movementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent());
 	check(IsValid(movementComponent));
@@ -39,7 +52,7 @@ void AACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
 	movementComponent->RotationRate = {0.f, Settings.TurnSpeed, 0.f};
 }
 
-void AACombatCharacter::SetGait(const ECharacterGait& InGait)
+void ACombatCharacter::SetGait(const ECharacterGait& InGait)
 {
 	Gait = InGait;
 
@@ -50,7 +63,12 @@ void AACombatCharacter::SetGait(const ECharacterGait& InGait)
 	}
 }
 
-FGaitSettings AACombatCharacter::GetCurrentGaitSettings()
+void ACombatCharacter::EquipWeapon(TObjectPtr<AWeapon> Weapon)
+{
+	
+}
+
+FGaitSettings ACombatCharacter::GetCurrentGaitSettings()
 {
 	auto settings = FindGaitSettings(Gait);
 	if (settings.IsSet())
@@ -61,13 +79,13 @@ FGaitSettings AACombatCharacter::GetCurrentGaitSettings()
 	return GaitSettings.IsEmpty() ? FGaitSettings() : GaitSettings.begin().Value();
 }
 
-TOptional<const FGaitSettings> AACombatCharacter::FindGaitSettings(ECharacterGait InGait)
+TOptional<const FGaitSettings> ACombatCharacter::FindGaitSettings(ECharacterGait InGait)
 {
 	return GaitSettings.Contains(InGait) ? GaitSettings[InGait] : TOptional<const FGaitSettings>();
 }
 
 // Called every frame
-void AACombatCharacter::Tick(float DeltaTime)
+void ACombatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (IsValid(MovementComponent) == false) return;
@@ -88,7 +106,7 @@ void AACombatCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void AACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
