@@ -12,11 +12,14 @@ AWeapon::AWeapon()
 	Mesh->SetupAttachment(RootComponent);	
 }
 
-void CreateAbilitySpec(TArray<FGameplayAbilitySpec>& Specs, const TSubclassOf<UGameplayAbility>& Ability)
+void AWeapon::CreateAbilitySpec(TArray<FGameplayAbilitySpec>& Specs, const TSubclassOf<UGameplayAbility>& Ability)
 {
 	if (IsValid(Ability) == false) return;
+
+	FGameplayAbilitySpec Spec {Ability, 0};
+	Spec.SourceObject = this;
 	
-	Specs.Add({Ability, 1});	
+	Specs.Add(Spec);	
 }
 
 void AWeapon::Equip(TObjectPtr<UAbilitySystemComponent> AbilitySystem)
@@ -32,6 +35,7 @@ void AWeapon::Equip(TObjectPtr<UAbilitySystemComponent> AbilitySystem)
 void AWeapon::UnEquip()
 {
 	if (IsValid(BoundSystem) == false) return;
+	DetachFromActor({EDetachmentRule::KeepWorld, true});
 
 	for (auto Ability : BoundAbilities)
 	{

@@ -4,6 +4,9 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+const FName MainHandSocket = FName("weapon_socket_r");
+const FName OffHandSocket = FName("weapon_socket_l");
+
 // Sets default values
 ACombatCharacter::ACombatCharacter()
 {
@@ -63,8 +66,46 @@ void ACombatCharacter::SetGait(const ECharacterGait& InGait)
 	}
 }
 
-void ACombatCharacter::EquipWeapon(TObjectPtr<AWeapon> Weapon)
+TObjectPtr<AWeapon> ACombatCharacter::GetEquippedWeapon(EWeaponHand Hand)
 {
+	switch (Hand)
+	{
+	default:
+	case EWeaponHand::MainHand:
+		return MainHand;
+	case EWeaponHand::OffHand:
+		return OffHand;
+	}
+}
+
+const FName& GetWeaponSocket(EWeaponHand WeaponHand)
+{
+	switch (WeaponHand)
+	{
+	default:
+	case EWeaponHand::MainHand:
+		return MainHandSocket;
+	case EWeaponHand::OffHand:
+		return OffHandSocket;
+	}
+}
+
+void ACombatCharacter::EquipWeapon(AWeapon* Weapon)
+{
+	if (IsValid(AbilitySystem) == false) return;
+
+	UnEquip(Weapon->GetHandedness());
+	
+	Weapon->AttachToComponent(GetMesh(), {EAttachmentRule::SnapToTarget, true},
+		GetWeaponSocket(Weapon->GetHandedness()));
+	
+	Weapon->Equip(AbilitySystem);
+}
+
+void ACombatCharacter::UnEquip(EWeaponHand Hand)
+{
+	if (IsValid(AbilitySystem) == false) return;
+
 	
 }
 

@@ -57,6 +57,8 @@ protected:
 	FGaitSettings GetCurrentGaitSettings();
 	
 	TOptional<const FGaitSettings> FindGaitSettings(ECharacterGait InGait);
+
+	TObjectPtr<AWeapon> GetEquippedWeapon(EWeaponHand Hand);
 	
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -67,7 +69,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void SetGait(const ECharacterGait& InGait);
 
-	void EquipWeapon(TObjectPtr<AWeapon> Weapon);
+	UFUNCTION(BlueprintCallable, Category="Weapons")
+	void EquipWeapon(AWeapon* Weapon);
+
+	UFUNCTION(BlueprintCallable, Category="Weapons")
+	void UnEquip(EWeaponHand Hand);
 	
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Camera")
