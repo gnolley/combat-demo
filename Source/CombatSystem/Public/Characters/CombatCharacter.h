@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -66,6 +67,9 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; }
 
+	UFUNCTION(BlueprintCallable, Category="Abilities")
+	FGameplayAbilitySpecHandle GetPrimaryAbility() const;
+	
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void SetGait(const ECharacterGait& InGait);
 

@@ -55,6 +55,23 @@ void ACombatCharacter::SetGaitSettings(const FGaitSettings& Settings)
 	movementComponent->RotationRate = {0.f, Settings.TurnSpeed, 0.f};
 }
 
+FGameplayAbilitySpecHandle ACombatCharacter::GetPrimaryAbility() const
+{
+	auto abilities = AbilitySystem->GetActivatableAbilities();
+	const auto primaryTag = FGameplayTag::RequestGameplayTag(FName("Ability.Primary"));
+	
+	for (const auto& abilitySpec : abilities)
+	{
+		auto tags = abilitySpec.Ability->AbilityTags;
+		if(tags.HasTag(primaryTag))
+		{
+			return abilitySpec.Handle;
+		}   
+	}
+
+	return {};
+}
+
 void ACombatCharacter::SetGait(const ECharacterGait& InGait)
 {
 	Gait = InGait;

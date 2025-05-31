@@ -27,7 +27,7 @@ public:
 	void Equip(TObjectPtr<UAbilitySystemComponent> AbilitySystem);
 	void UnEquip();
 
-	EWeaponHand GetHandedness() const { return Handedness; };
+	EWeaponHand GetHandedness() const { return Handedness; }
 	
 protected:
 	// Called when the game starts or when spawned
