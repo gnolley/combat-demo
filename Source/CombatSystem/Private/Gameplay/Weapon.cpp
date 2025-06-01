@@ -45,6 +45,16 @@ void AWeapon::UnEquip()
 	BoundAbilities.Empty();
 }
 
+void AWeapon::ActivateWeapon()
+{
+	WeaponActive = true;
+}
+
+void AWeapon::DeactivateWeapon()
+{
+	WeaponActive = false;
+}
+
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
@@ -54,5 +64,15 @@ void AWeapon::BeginPlay()
 	CreateAbilitySpec(AbilitySpecs, PrimaryAbility);
     CreateAbilitySpec(AbilitySpecs, SecondaryAbility);
     CreateAbilitySpec(AbilitySpecs, SecondaryAbility);
+}
+
+void AWeapon::TryAffectActor(AActor* OtherActor)
+{
+	if(OtherActor == GetOwner()) return;
+	
+	OnWeaponHit.Broadcast({
+		.HitActor = OtherActor,
+		.ImpulseNormal = FVector::ForwardVector,
+	});
 }
 

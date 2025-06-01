@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Gameplay/Weapon.h"
+#include "Gameplay/Attributes/DamageableAttributes.h"
 #include "CombatCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -89,6 +90,9 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Abilities")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Attibutes")
+	TObjectPtr<UDamageableAttributes> DamageableAttributes;
+	
 	TObjectPtr<AWeapon> MainHand {};
 	TObjectPtr<AWeapon> OffHand {};
 

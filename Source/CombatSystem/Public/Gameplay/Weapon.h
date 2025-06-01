@@ -7,6 +7,20 @@
 #include "GameplayAbilities/Public/Abilities/GameplayAbility.h"
 #include "Weapon.generated.h"
 
+USTRUCT(BlueprintType)
+struct FWeaponHitInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActor> HitActor;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector ImpulseNormal;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponHit, FWeaponHitInfo, HitInfo);
+
 UENUM()
 enum class EWeaponHand : uint8
 {
@@ -27,14 +41,28 @@ public:
 	void Equip(TObjectPtr<UAbilitySystemComponent> AbilitySystem);
 	void UnEquip();
 
+	UFUNCTION(BlueprintCallable, Category="Weapon")
+	void ActivateWeapon();
+	UFUNCTION(BlueprintCallable, Category="Weapon")
+	void DeactivateWeapon();
+	UFUNCTION(BlueprintCallable, Category="Weapon")
+	inline bool IsWeaponActive() const {return WeaponActive; }
+
 	EWeaponHand GetHandedness() const { return Handedness; }
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void TryAffectActor(AActor* OtherActor);
+	
 	void CreateAbilitySpec(TArray<FGameplayAbilitySpec>& Specs, const TSubclassOf<UGameplayAbility>& Ability);
-
+	
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponHit OnWeaponHit;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equiping")
 	EWeaponHand Handedness;
@@ -54,4 +82,6 @@ protected:
 	TArray<FGameplayAbilitySpec> AbilitySpecs {};
 	TObjectPtr<UAbilitySystemComponent> BoundSystem;
 	TArray<FGameplayAbilitySpecHandle> BoundAbilities {};
+
+	bool WeaponActive;
 };
