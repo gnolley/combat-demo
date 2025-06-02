@@ -6,6 +6,18 @@
 #include "GameFramework/PlayerController.h"
 #include "CombatSystemPlayerController.generated.h"
 
+USTRUCT(BlueprintType)
+struct FTargetingParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category="Targeting")
+	float MaxTargetAngle;
+
+	UPROPERTY(BlueprintReadOnly, Category="Targeting")
+	float MaxTargetDistance {2000};
+};
+
 /**
  * 
  */
@@ -13,5 +25,15 @@ UCLASS()
 class COMBATSYSTEM_API ACombatSystemPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void UpdateTargeting();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Targeting")
+	FTargetingParams TargetingParams {};
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Targeting")
+	TObjectPtr<AActor> HighlightedActor {};
 };
