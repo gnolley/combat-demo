@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Gameplay/Weapon.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -68,7 +69,7 @@ void AWeapon::BeginPlay()
 
 void AWeapon::TryAffectActor(AActor* OtherActor)
 {
-	if(OtherActor == GetOwner()) return;
+	if(WeaponActive == false || OtherActor == GetOwner()) return;
 	
 	OnWeaponHit.Broadcast({
 		.HitActor = OtherActor,

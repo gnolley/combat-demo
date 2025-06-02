@@ -10,19 +10,22 @@ ATargetDummy::ATargetDummy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+	DamageableAttributes = CreateDefaultSubobject<UDamageableAttributes>(TEXT("DamageableAttributes"));
 }
 
 // Called when the game starts or when spawned
 void ATargetDummy::BeginPlay()
 {
 	Super::BeginPlay();
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(DamageableAttributes->GetHealthAttribute())
 		.AddLambda([](const FOnAttributeChangeData& data)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Dummy Health Changed: %f"), data.NewValue)
 		});
 	SetupAttributes();
+
+	DamageableAttributes->SetHealth(100.f);
 }
 
 // Called every frame
@@ -36,6 +39,7 @@ void ATargetDummy::SetupAttributes()
 {
 	if (IsValid(AbilitySystemComponent) == false)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Target Dummy Ability System Invalid."));
 		return;
 	}
 

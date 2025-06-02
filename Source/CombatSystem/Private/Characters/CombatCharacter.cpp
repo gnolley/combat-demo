@@ -24,6 +24,7 @@ ACombatCharacter::ACombatCharacter()
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
 
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
+	DamageableAttributes = CreateDefaultSubobject<UDamageableAttributes>(TEXT("DamageableAttributes"));
 }
 
 // Called when the game starts or when spawned
