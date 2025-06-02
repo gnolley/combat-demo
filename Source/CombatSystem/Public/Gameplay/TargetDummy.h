@@ -7,10 +7,11 @@
 #include "AbilitySystemInterface.h"
 #include "Gameplay/Attributes/DamageableAttributes.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "TargetDummy.generated.h"
 
 UCLASS()
-class COMBATSYSTEM_API ATargetDummy : public AActor, public IAbilitySystemInterface
+class COMBATSYSTEM_API ATargetDummy : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
