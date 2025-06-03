@@ -75,12 +75,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void SetGait(const ECharacterGait& InGait);
 
+	
 	UFUNCTION(BlueprintCallable, Category="Weapons")
 	void EquipWeapon(AWeapon* Weapon);
 
 	UFUNCTION(BlueprintCallable, Category="Weapons")
 	void UnEquip(EWeaponHand Hand);
+	
+	UFUNCTION(BlueprintCallable, Category="Weapons")
+	TArray<AWeapon*> GetWeapons();
 
+	
 	UFUNCTION(BlueprintCallable, Category="Combat")
 	virtual void SetTarget(AActor* NewTarget) {  Target = NewTarget; }
 

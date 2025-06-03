@@ -109,6 +109,17 @@ void ACombatCharacter::EquipWeapon(AWeapon* Weapon)
 		GetWeaponSocket(Weapon->GetHandedness()));
 	
 	Weapon->Equip(AbilitySystem);
+
+	switch(Weapon->GetHandedness())
+	{
+	default:
+	case EWeaponHand::MainHand:
+		MainHand = Weapon;
+		break;
+	case EWeaponHand::OffHand:
+		OffHand = Weapon;
+		break;
+	}
 }
 
 void ACombatCharacter::UnEquip(EWeaponHand Hand)
@@ -116,6 +127,14 @@ void ACombatCharacter::UnEquip(EWeaponHand Hand)
 	if (IsValid(AbilitySystem) == false) return;
 
 	
+}
+
+TArray<AWeapon*> ACombatCharacter::GetWeapons()
+{
+	return {
+		GetEquippedWeapon(EWeaponHand::MainHand),
+		GetEquippedWeapon(EWeaponHand::OffHand),
+	};
 }
 
 FGaitSettings ACombatCharacter::GetCurrentGaitSettings()
