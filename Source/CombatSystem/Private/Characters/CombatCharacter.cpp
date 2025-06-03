@@ -14,15 +14,6 @@ ACombatCharacter::ACombatCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	auto root = GetRootComponent();
 
-	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Arm"));
-	CameraArm->SetupAttachment(root);
-	CameraArm->TargetArmLength = 300;
-	CameraArm->bEnableCameraLag = true;
-	CameraArm->CameraLagSpeed = 5.f;
-
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
-
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
 	DamageableAttributes = CreateDefaultSubobject<UDamageableAttributes>(TEXT("DamageableAttributes"));
 }
@@ -162,11 +153,5 @@ void ACombatCharacter::Tick(float DeltaTime)
 	auto accel = settings.MaxAcceleration * settings.AccelerationCurve->GetFloatValue(speed / settings.MaxSpeed);
 	
 	MovementComponent->MaxAcceleration = accel;
-}
-
-// Called to bind functionality to input
-void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 

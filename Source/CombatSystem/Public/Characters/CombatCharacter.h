@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemInterface.h"
+#include "Gameplay/TargetableInterface.h"
 #include "Gameplay/Weapon.h"
 #include "Gameplay/Attributes/DamageableAttributes.h"
 #include "CombatCharacter.generated.h"
@@ -41,7 +42,8 @@ struct FGaitSettings
 };
 
 UCLASS()
-class COMBATSYSTEM_API ACombatCharacter : public ACharacter, public IAbilitySystemInterface
+class COMBATSYSTEM_API ACombatCharacter : public ACharacter,
+	public IAbilitySystemInterface, public ITargetable
 {
 	GENERATED_BODY()
 
@@ -64,7 +66,6 @@ protected:
 	
 public:	
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; }
 
@@ -79,22 +80,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Weapons")
 	void UnEquip(EWeaponHand Hand);
+
+	UFUNCTION(BlueprintCallable, Category="Combat")
+	virtual void SetTarget(AActor* NewTarget) {  Target = NewTarget; }
+
+	UFUNCTION(BlueprintCallable, Category="Combat")
+	bool HasTarget() const {  return IsValid(Target); }
 	
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Camera")
-	TObjectPtr<USpringArmComponent> CameraArm;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Camera")
-	TObjectPtr<UCameraComponent> Camera;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Abilities")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Attibutes")
 	TObjectPtr<UDamageableAttributes> DamageableAttributes;
-	
-	TObjectPtr<AWeapon> MainHand {};
-	TObjectPtr<AWeapon> OffHand {};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Movement")
 	ECharacterGait Gait { ECharacterGait::Walk };
@@ -104,6 +102,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Movement")
 	TObjectPtr<UCurveFloat> BrakingCurve {};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat")
+	TObjectPtr<AActor> Target {};
+	
+	TObjectPtr<AWeapon> MainHand {};
+	TObjectPtr<AWeapon> OffHand {};
 	
 private:
 	TObjectPtr<UCharacterMovementComponent> MovementComponent;

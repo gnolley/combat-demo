@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
+#include "TargetableInterface.h"
 #include "Gameplay/Attributes/DamageableAttributes.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "TargetDummy.generated.h"
 
 UCLASS()
-class COMBATSYSTEM_API ATargetDummy : public ACharacter, public IAbilitySystemInterface
+class COMBATSYSTEM_API ATargetDummy : public ACharacter,
+	public IAbilitySystemInterface, public ITargetable
 {
 	GENERATED_BODY()
 

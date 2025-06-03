@@ -11,10 +11,10 @@ struct FTargetingParams
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category="Targeting")
-	float MaxTargetAngle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Targeting")
+	float MaxTargetAngle {60.f};
 
-	UPROPERTY(BlueprintReadOnly, Category="Targeting")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Targeting")
 	float MaxTargetDistance {2000};
 };
 
@@ -30,10 +30,26 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void UpdateTargeting();
 
+	UFUNCTION(BlueprintCallable, Category="CombatSystemPlayerController|Targeting")
+	AActor* GetTarget() const { return Target;}
+
+	UFUNCTION(BlueprintCallable, Category="CombatSystemPlayerController|Targeting")
+	bool HasTarget() const {return IsValid(Target); }	
+
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Targeting")
+	UFUNCTION(BlueprintCallable, Category="CombatSystemPlayerController|Targeting")
+	void SetTarget(AActor* NewTarget);
+
+	UFUNCTION(BlueprintCallable, Category="CombatSystemPlayerController|Targeting")
+	void UnlockTarget();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Targeting")
 	FTargetingParams TargetingParams {};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Targeting")
 	TObjectPtr<AActor> HighlightedActor {};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Targeting")
+	TObjectPtr<AActor> Target {};
 };
