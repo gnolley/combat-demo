@@ -63,6 +63,9 @@ protected:
 	TOptional<const FGaitSettings> FindGaitSettings(ECharacterGait InGait);
 
 	TObjectPtr<AWeapon> GetEquippedWeapon(EWeaponHand Hand);
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Targetomg")
+	void OnTargetSet(AActor* NewTarget);
 	
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -87,7 +90,11 @@ public:
 
 	
 	UFUNCTION(BlueprintCallable, Category="Combat")
-	virtual void SetTarget(AActor* NewTarget) {  Target = NewTarget; }
+	virtual void SetTarget(AActor* NewTarget)
+	{
+		Target = NewTarget;
+		OnTargetSet(NewTarget);
+	}
 
 	UFUNCTION(BlueprintCallable, Category="Combat")
 	bool HasTarget() const {  return IsValid(Target); }
