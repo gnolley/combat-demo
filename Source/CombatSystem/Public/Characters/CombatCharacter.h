@@ -64,7 +64,7 @@ protected:
 
 	TObjectPtr<AWeapon> GetEquippedWeapon(EWeaponHand Hand);
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Targetomg")
+	UFUNCTION(BlueprintImplementableEvent, Category="Targeting")
 	void OnTargetSet(AActor* NewTarget);
 	
 public:	

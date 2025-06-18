@@ -129,12 +129,6 @@ void ACombatSystemPlayerController::SetTarget(AActor* NewTarget)
 	{
 		PlayerPawn->SetTarget(NewTarget);
 	}
-	
-	if (NewTarget)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Target Set: %s"), *NewTarget->GetName());
-	}
-	else UE_LOG(LogTemp, Display, TEXT("Target Unset"));
 }
 
 void ACombatSystemPlayerController::UnlockTarget()
